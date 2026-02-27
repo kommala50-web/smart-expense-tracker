@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-[1440px] mx-auto p-6 space-y-6">
+
+    <!-- HEADER -->
+    <header class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-[#0f172a] flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600">receipt_long</span>
+                Expenses
+            </h1>
+            <p class="text-slate-500 text-sm">Track, filter and manage all your transactions</p>
+        </div>
+
+        <a href="{{ url_for('add_expense') }}"
+           class="bg-[#005eff] text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-600 transition shadow-sm flex items-center gap-2">
+           <span class="material-symbols-outlined">add</span>
+           Add Expense
+        </a>
+    </header>
+
+    <!-- KPI CARDS -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+            <p class="text-[10px] font-black uppercase text-slate-400">Total Expense</p>
+            <h3 class="text-2xl font-black mt-1 text-slate-900">₹{{ "{:,.0f}".format(total_expense) }}</h3>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+            <p class="text-[10px] font-black uppercase text-slate-400">Total Income</p>
+            <h3 class="text-2xl font-black mt-1 text-emerald-600">₹{{ "{:,.0f}".format(total_income) }}</h3>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+            <p class="text-[10px] font-black uppercase text-slate-400">Transactions</p>
+            <h3 class="text-2xl font-black mt-1">{{ expenses|length }}</h3>
+        </div>
+
+    </section>
+
+    <!-- FILTER BAR -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <form method="GET" class="flex flex-wrap gap-4 items-center">
+
+            <input type="text" name="search"
+                   placeholder="Search description..."
+                   class="border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-100">
+
+            <select name="category"
+                    class="border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-100">
+                <option value="">All Categories</option>
+                {% for c in categories %}
+                <option value="{{ c }}">{{ c }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="date" name="date"
+                   class="border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-100">
+
+            <button type="submit"
+                    class="bg-[#005eff] text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 transition">
+                Filter
+            </button>
+
+        </form>
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
+        <table class="w-full text-left text-sm">
+
+            <thead class="bg-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                <tr>
+                    <th class="px-6 py-4">Date</th>
+                    <th class="px-6 py-4">Description</th>
+                    <th class="px-6 py-4">Category</th>
+                    <th class="px-6 py-4">Account</th>
+                    <th class="px-6 py-4">Receipt</th>
+                    <th class="px-6 py-4 text-right">Amount</th>
+                    <th class="px-6 py-4 text-center">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-50">
+
+                {% for exp in expenses %}
+                <tr class="hover:bg-slate-50 transition">
+
+                    <td class="px-6 py-4 font-medium text-slate-500">{{ exp.date }}</td>
+
+                    <td class="px-6 py-4 text-slate-900 font-semibold">{{ exp.description }}</td>
+
+                    <!-- CATEGORY WITH ICON -->
+                    <td class="px-6 py-4">
+                        <span class="flex items-center gap-2 text-xs font-bold uppercase">
+
+                            {% if exp.category == "Food" %}
+                            <span class="material-symbols-outlined text-orange-500">restaurant</span>
+
+                            {% elif exp.category == "Transport" %}
+                            <span class="material-symbols-outlined text-blue-500">directions_car</span>
+
+                            {% elif exp.category == "Shopping" %}
+                            <span class="material-symbols-outlined text-purple-500">shopping_bag</span>
+
+                            {% elif exp.category == "Entertainment" %}
+                            <span class="material-symbols-outlined text-pink-500">movie</span>
+
+                            {% elif exp.category == "Bills" %}
+                            <span class="material-symbols-outlined text-yellow-500">bolt</span>
+
+                            {% elif exp.category == "Study" %}
+                            <span class="material-symbols-outlined text-green-500">menu_book</span>
+
+                            {% else %}
+                            <span class="material-symbols-outlined text-gray-400">receipt</span>
+                            {% endif %}
+
+                            {{ exp.category }}
+                        </span>
+                    </td>
+
+                    <!-- ACCOUNT WITH ICON -->
+                    <td class="px-6 py-4 flex items-center gap-2">
+
+                        {% if exp.account == "Cash" %}
+                        <span class="material-symbols-outlined text-green-500">payments</span>
+
+                        {% elif exp.account == "Bank" %}
+                        <span class="material-symbols-outlined text-blue-500">account_balance</span>
+
+                        {% elif exp.account == "Card" %}
+                        <span class="material-symbols-outlined text-purple-500">credit_card</span>
+
+                        {% else %}
+                        <span class="material-symbols-outlined text-gray-400">account_balance_wallet</span>
+                        {% endif %}
+
+                        {{ exp.account }}
+
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {% if exp.receipt %}
+                        <a href="{{ url_for('static', filename='uploads/' + exp.receipt) }}"
+                           target="_blank"
+                           class="text-blue-600 text-xs font-bold hover:underline">
+                           View
+                        </a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+
+                    <td class="px-6 py-4 text-right font-black
+                        {{ 'text-red-500' if exp.transaction_type=='expense' else 'text-emerald-500' }}">
+                        {{ '-' if exp.transaction_type=='expense' else '+' }}
+                        ₹{{ "{:,.0f}".format(exp.amount) }}
+                    </td>
+
+                    <td class="px-6 py-4 text-center space-x-3">
+
+                        <a href="{{ url_for('edit_expense', expense_id=exp.id) }}"
+                           class="text-blue-600 text-xs font-bold hover:underline">Edit</a>
+
+                        <a href="{{ url_for('delete_expense', expense_id=exp.id) }}"
+                           class="text-red-500 text-xs font-bold hover:underline">Delete</a>
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

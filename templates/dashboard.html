@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Tracker | Elite Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        body { 
+            background: linear-gradient(135deg, #f6f9ff 0%, #edf2f7 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #1a202c;
+            min-height: 100vh;
+        }
+
+        /* The "Secret Sauce" for Attraction: Glassmorphism & Soft Shadows */
+        .premium-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .premium-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 82, 255, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Specific Pill Styling from your image */
+        .status-pill {
+            padding: 10px 18px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Animated Progress Circle */
+        .circle-svg {
+            filter: drop-shadow(0 0 8px rgba(0, 82, 255, 0.3));
+        }
+
+        .spending-trend-bg {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glowing dots for Chart */
+        .chart-glow {
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+        }
+
+        .nav-active {
+            position: relative;
+            color: white !important;
+        }
+        .nav-active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 4px;
+            background: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="p-0">
+
+    <nav class="bg-[#0052FF] text-white px-10 py-5 flex justify-between items-center sticky top-0 z-50 shadow-2xl">
+        <div class="flex items-center gap-3">
+            <div class="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+                <i class="fas fa-layer-group text-xl"></i>
+            </div>
+            <span class="font-extrabold text-xl tracking-tight">SmartExpense <span class="font-light opacity-80"></span></span>
+        </div>
+        
+        <div class="hidden lg:flex gap-10">
+            <a href="{{ url_for('dashboard') }}" class="nav-link nav-active font-bold text-sm">Dashboard</a>
+            <a href="{{ url_for('add_expense') }}" class="nav-link opacity-70 hover:opacity-100 font-bold text-sm transition-all">Add Expense</a>
+            <a href="{{ url_for('view_expenses') }}" class="nav-link opacity-70 hover:opacity-100 font-bold text-sm transition-all">Expenses</a>
+            <a href="{{ url_for('set_budget') }}" class="nav-link opacity-70 hover:opacity-100 font-bold text-sm transition-all">Budget</a>
+             <a href="{{ url_for('events') }}" class="nav-link opacity-70 hover:opacity-100 font-bold text-sm transition-all">Events</a>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <button class="text-white/80 hover:text-white"><i class="far fa-bell text-lg"></i></button>
+            <div class="h-8 w-[1px] bg-white/20"></div>
+            <div class="relative">
+
+    <button onclick="toggleUserMenu()" class="flex items-center gap-3 focus:outline-none">
+
+        <div class="text-right hidden sm:block">
+            <p class="text-[10px] font-bold opacity-70 uppercase tracking-tighter">Verified User</p>
+            <p class="text-xs font-black">{{ current_user.username }}</p>
+        </div>
+
+        <img src="https://ui-avatars.com/api/?name={{ current_user.username }}&background=fff&color=0052FF"
+             class="w-10 h-10 rounded-2xl border-2 border-white/20 shadow-lg hover:scale-105 transition">
+
+    </button>
+
+    <!-- DROPDOWN -->
+    <div id="userMenu" class="hidden absolute right-0 mt-3 w-44 bg-white text-slate-700 rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+
+        <a href="{{ url_for('dashboard') }}" class="block px-4 py-3 text-sm hover:bg-slate-50">
+            <i class="fas fa-user mr-2 text-slate-400"></i> Profile
+        </a>
+
+        <a href="{{ url_for('logout') }}" class="block px-4 py-3 text-sm hover:bg-red-50 text-red-600">
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+        </a>
+
+    </div>
+
+</div>
+    </nav>
+
+    <main class="max-w-[1550px] mx-auto p-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
+            <div class="status-pill bg-red-50 text-red-600 border border-red-100">
+                <i class="fas fa-circle-exclamation text-base"></i>
+                <span>Overspent: {{ insight_message }}</span>
+            </div>
+            <div class="status-pill bg-amber-50 text-amber-600 border border-amber-100">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>Near Budget: 88% Reached</span>
+            </div>
+            <div class="status-pill bg-blue-50 text-blue-600 border border-blue-100">
+                <i class="fas fa-credit-card"></i>
+                <span>Large Transaction Detected</span>
+            </div>
+            <div class="status-pill bg-purple-50 text-purple-600 border border-purple-100">
+                <i class="fas fa-bolt"></i>
+                <span>Spending Spike: +15%</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            {% set stats = [
+                ('Total Expense', total_expense, 'fa-chart-pie', 'red'),
+                ('Total Income', total_income, 'fa-arrow-up-right-dots', 'green'),
+                ('Remaining Balance', net_balance, 'fa-building-columns', 'blue'),
+                ('Total Transactions', total_transactions, 'fa-receipt', 'slate')
+            ] %}
+            {% for title, val, icon, color in stats %}
+            <div class="premium-card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">{{ title }}</span>
+                    <div class="w-10 h-10 rounded-xl bg-{{ color }}-50 text-{{ color }}-500 flex items-center justify-center text-sm">
+                        <i class="fas {{ icon }}"></i>
+                    </div>
+                </div>
+                <h3 class="text-3xl font-black text-slate-800">₹{{ "{:,.0f}".format(val) }}</h3>
+                <p class="text-[10px] font-bold text-{{ color }}-500 mt-2">
+                    <i class="fas fa-caret-up mr-1"></i> 8.2% <span class="text-slate-400">vs last month</span>
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <div class="lg:col-span-3 space-y-8">
+                <div class="premium-card p-8 text-center">
+                    <h4 class="text-left font-black text-slate-700 text-xs uppercase tracking-widest mb-10">Financial Health Score</h4>
+                    <div class="relative inline-flex items-center justify-center mb-8">
+                        <svg class="w-44 h-44 circle-svg">
+                            <circle class="text-slate-100" stroke-width="12" stroke="currentColor" fill="transparent" r="75" cx="88" cy="88"/>
+                            <circle class="text-blue-600" stroke-width="12" 
+                                stroke-dasharray="471" stroke-dashoffset="{{ 471 - (health_score / 100 * 471) }}" 
+                                stroke-linecap="round" stroke="currentColor" fill="transparent" r="75" cx="88" cy="88"/>
+                        </svg>
+                        <div class="absolute">
+                            <p class="text-5xl font-black text-slate-800">{{ health_score }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Excellent</p>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-500 text-white py-2 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-200">
+                        {{ health_label }}
+                    </div>
+                </div>
+
+                <div class="premium-card p-6">
+                    <h4 class="font-black text-slate-700 text-xs uppercase tracking-widest mb-6">Smart Recommendations</h4>
+                    <div class="space-y-4">
+                        {% for rec in recommendations %}
+                        <div class="flex gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all cursor-default group">
+                            <i class="fas fa-lightbulb text-blue-500 mt-1 group-hover:scale-125 transition-transform"></i>
+                            <p class="text-xs font-semibold text-slate-600 leading-relaxed">{{ rec }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-9 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="premium-card p-8">
+                        <h4 class="font-black text-slate-700 text-xs uppercase tracking-widest mb-8">Spending Distribution</h4>
+                        <div class="h-64">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="spending-trend-bg p-8 shadow-2xl">
+                        <div class="flex justify-between items-center mb-8 relative z-10">
+                            <h4 class="font-black text-white text-xs uppercase tracking-widest">Spending Trend</h4>
+                            <div class="flex gap-2">
+                                <span class="bg-blue-500/20 text-blue-400 text-[9px] font-black px-2 py-1 rounded-lg">INCOME</span>
+                                <span class="bg-white/10 text-white text-[9px] font-black px-2 py-1 rounded-lg">EXPENSE</span>
+                            </div>
+                        </div>
+                        <div class="h-60 relative z-10">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-card p-8">
+                    <div class="flex justify-between items-center mb-10">
+                        <h4 class="text-2xl font-black text-slate-800 tracking-tight">Recent Transactions</h4>
+                        <div class="relative group">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs transition-colors group-focus-within:text-blue-500"></i>
+                            <input type="text" placeholder="Search transactions..." class="bg-slate-50 border-none pl-10 pr-6 py-3 rounded-2xl text-xs font-bold focus:ring-2 focus:ring-blue-500 w-72 transition-all">
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        {% for exp in recent_expenses|reverse %}
+                        <div onclick="openModal(
+                                '{{ exp.description }}',
+                                '{{ exp.category }}',
+                                '{{ exp.date }}',
+                                '{{ exp.amount }}',
+                                '{{ exp.transaction_type }}',
+                                '{{ exp.receipt }}'
+                             )"
+                            class="flex items-center justify-between p-5 rounded-[20px] bg-white hover:bg-slate-50 border border-slate-50 hover:border-blue-100 transition-all group cursor-pointer shadow-sm hover:shadow-md">
+
+                            <div class="flex items-center gap-5">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-100 group-hover:bg-blue-50 transition-colors">
+                                    <i class="fas {% if exp.transaction_type == 'expense' %}fa-shopping-bag text-red-400{% else %}fa-wallet text-emerald-400{% endif %}"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-sm tracking-tight">{{ exp.description }}</h5>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mt-1">{{ exp.category }} • {{ exp.date }}</p>
+                                </div>
+                            </div>
+                            <span class="text-base font-black {% if exp.transaction_type == 'expense' %}text-red-500{% else %}text-emerald-500{% endif %}">
+                                {% if exp.transaction_type == 'expense' %}-{% else %}+{% endif %}₹{{ "{:,.0f}".format(exp.amount) }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Chart.js Configuration for "Attractive" UI
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ chart_labels|tojson }},
+                datasets: [{
+                    data: {{ chart_values|tojson }},
+                    backgroundColor: ['#0052FF', '#00C853', '#FF9100', '#FF1744', '#8b5cf6'],
+                    borderWidth: 8,
+                    borderColor: '#ffffff',
+                    hoverOffset: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '80%'
+            }
+        });
+
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: {{ trend_labels|tojson }},
+                datasets: [{
+                    data: {{ trend_values|tojson }},
+                    borderColor: '#3b82f6',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    fill: true,
+                    backgroundColor: (ctx) => {
+                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
+                        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+                        gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                        return gradient;
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { weight: 'bold', size: 9 } } },
+                    y: { display: false }
+                }
+            }
+        });
+    </script>
+
+<!-- TRANSACTION MODAL -->
+<div id="txModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+
+    <div class="bg-white rounded-2xl w-[420px] p-6 shadow-2xl relative">
+
+        <button onclick="closeModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-700">
+            <i class="fas fa-xmark"></i>
+        </button>
+
+        <h3 class="text-xl font-bold mb-4">Transaction Details</h3>
+
+        <div class="space-y-2 text-sm">
+
+            <p><b>Description:</b> <span id="mDesc"></span></p>
+            <p><b>Category:</b> <span id="mCat"></span></p>
+            <p><b>Date:</b> <span id="mDate"></span></p>
+            <p><b>Amount:</b> ₹<span id="mAmount"></span></p>
+            <p><b>Type:</b> <span id="mType"></span></p>
+
+            <div id="mReceiptBox" class="pt-3 hidden">
+                <p class="font-semibold mb-1">Receipt</p>
+                <img id="mReceipt" class="rounded-lg border max-h-40">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+function openModal(desc, cat, date, amount, type, receipt) {
+
+    document.getElementById('txModal').classList.remove('hidden')
+    document.getElementById('txModal').classList.add('flex')
+
+    document.getElementById('mDesc').innerText = desc
+    document.getElementById('mCat').innerText = cat
+    document.getElementById('mDate').innerText = date
+    document.getElementById('mAmount').innerText = amount
+    document.getElementById('mType').innerText = type
+
+    if(receipt && receipt !== "None") {
+        document.getElementById('mReceiptBox').classList.remove('hidden')
+        document.getElementById('mReceipt').src = "/static/uploads/" + receipt
+    } else {
+        document.getElementById('mReceiptBox').classList.add('hidden')
+    }
+}
+
+function closeModal() {
+    document.getElementById('txModal').classList.add('hidden')
+}
+
+</script>
+<script>
+function toggleUserMenu() {
+    document.getElementById("userMenu").classList.toggle("hidden")
+}
+
+window.addEventListener("click", function(e) {
+    const menu = document.getElementById("userMenu")
+    if (!e.target.closest(".relative")) {
+        menu.classList.add("hidden")
+    }
+})
+</script>
+</body>
+</html>

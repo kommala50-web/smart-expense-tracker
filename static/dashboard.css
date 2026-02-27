@@ -1,0 +1,79 @@
+/* ===== PAGE ===== */
+body {
+    background: #f6f8fc;
+    font-family: "Inter", sans-serif;
+}
+
+/* ===== CARDS ===== */
+.card {
+    border-radius: 16px;
+    border: none;
+    transition: all .25s ease;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+}
+
+/* ===== KPI COLORS ===== */
+.kpi-expense { border-left: 5px solid #ef4444; }
+.kpi-income { border-left: 5px solid #10b981; }
+.kpi-balance { border-left: 5px solid #3b82f6; }
+.kpi-transactions { border-left: 5px solid #6366f1; }
+
+/* ===== HEALTH CARD ===== */
+.health-card {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    color: white;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress {
+    border-radius: 999px;
+    background: #e5e7eb;
+}
+
+.progress-bar {
+    border-radius: 999px;
+    background: linear-gradient(90deg,#4f46e5,#3b82f6);
+}
+
+/* ===== TABLE ===== */
+.table thead {
+    background: #f3f4f6;
+}
+
+.table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* ===== ALERTS ===== */
+.alert {
+    border-radius: 12px;
+    border: none;
+}
+
+/* ===== SEARCH ===== */
+.search-box input {
+    border-radius: 999px;
+    padding-left: 15px;
+}
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ===== SMOOTH FADE ===== */
+.fade-in {
+    animation: fadeIn .5s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(10px);}
+    to {opacity:1; transform: translateY(0);}
+}
+

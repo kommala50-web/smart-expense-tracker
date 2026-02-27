@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.page-wrapper{
+max-width:1400px;
+margin:20px auto;
+padding:20px;
+}
+
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.primary-btn{
+background:#2563eb;
+color:white;
+padding:10px 20px;
+border-radius:10px;
+font-weight:600;
+text-decoration:none;
+}
+
+.table-card{
+background:white;
+border-radius:16px;
+border:1px solid #e5e7eb;
+box-shadow:0 4px 20px rgba(0,0,0,.05);
+overflow:hidden;
+}
+
+.expense-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.expense-table th{
+text-align:left;
+padding:14px;
+font-size:12px;
+color:#6b7280;
+background:#f9fafb;
+}
+
+.expense-table td{
+padding:16px;
+border-top:1px solid #f1f5f9;
+}
+
+.badge{
+background:#eff6ff;
+color:#2563eb;
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+}
+
+.actions a{
+margin-right:10px;
+font-size:13px;
+text-decoration:none;
+font-weight:600;
+}
+
+.edit{color:#2563eb}
+.delete{color:#ef4444}
+
+.kpi-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-bottom:20px;
+}
+
+.kpi-card{
+background:white;
+padding:20px;
+border-radius:14px;
+border:1px solid #e5e7eb;
+box-shadow:0 4px 15px rgba(0,0,0,.04);
+}
+
+.kpi-card span{
+font-size:12px;
+color:#6b7280;
+}
+
+.kpi-card h2{
+margin-top:6px;
+}
+</style>
+
+<div class="page-wrapper">
+
+<div class="page-header">
+<div>
+<h1>Your Events</h1>
+<p style="color:#6b7280">Manage and track event budgets</p>
+</div>
+
+<a href="{{ url_for('create_event') }}" class="primary-btn">+ Create Event</a>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid">
+
+<div class="kpi-card">
+<span>Total Events</span>
+<h2>{{ events|length }}</h2>
+</div>
+
+<div class="kpi-card">
+<span>Total Budget</span>
+<h2>
+₹ {{
+    events | sum(attribute='budget_limit') if events else 0
+}}
+</h2>
+</div>
+
+<div class="kpi-card">
+<span>Active Events</span>
+<h2>{{ events|length }}</h2>
+</div>
+
+</div>
+
+<!-- TABLE -->
+<div class="table-card">
+
+<table class="expense-table">
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Date</th>
+<th>Budget</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for event in events %}
+<tr>
+
+<td style="font-weight:600">{{ event.name }}</td>
+
+<td>{{ event.description or "—" }}</td>
+
+<td>{{ event.date or "—" }}</td>
+
+<td>
+₹ {{ event.budget_limit or 0 }}
+</td>
+
+<td class="actions">
+
+<a href="{{ url_for('event_analytics', event_id=event.id) }}">View</a>
+
+<a href="{{ url_for('edit_event', event_id=event.id) }}" class="edit">Edit</a>
+
+<a href="{{ url_for('delete_event', event_id=event.id) }}" class="delete">Delete</a>
+
+</td>
+
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-[1440px] mx-auto p-6 space-y-6 bg-[#f8fafc] min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-700">
+    
+    <header class="flex justify-between items-start animate-in fade-in slide-in-from-top-4 duration-1000">
+        <div>
+            <nav class="group text-[11px] text-slate-400 mb-2 font-black uppercase tracking-widest flex items-center gap-1">
+                <a href="/events" class="group-hover:text-blue-600 transition-all duration-300 flex items-center">
+                    <span class="material-symbols-outlined text-[14px] mr-1">arrow_back</span> Event Management
+                </a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <h1 class="text-4xl font-black tracking-tight text-slate-900 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">{{ event.name }}</h1>
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full {{ 'bg-emerald-400' if not overspent else 'bg-red-400' }} opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 {{ 'bg-emerald-500' if not overspent else 'bg-red-500' }}"></span>
+                </span>
+            </div>
+            <p class="text-slate-500 text-sm mt-2 font-medium max-w-2xl leading-relaxed">{{ event_summary }}</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">settings</span> Edit
+            </button>
+            <button class="px-5 py-2.5 bg-[#005eff] text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-100 hover:shadow-blue-300 hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">ios_share</span> Export Report
+            </button>
+        </div>
+    </header>
+
+    <div class="group bg-white/50 backdrop-blur-md border border-blue-100 p-4 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md hover:border-blue-300 transition-all duration-500 cursor-default">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
+                <span class="material-symbols-outlined">verified_user</span>
+            </div>
+            <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">Financial Health Status</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <p class="text-[11px] font-black text-blue-800 uppercase bg-blue-50 px-3 py-1 rounded-full group-hover:bg-blue-100 transition-all">{{ recommendations[0] }}</p>
+            <p class="text-2xl font-black text-blue-600">{{ health_score }}<span class="text-xs text-slate-400">/100</span></p>
+        </div>
+    </div>
+
+    <section class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {% set kpis = [
+            {'label': 'Total Spent', 'value': '₹' ~ total_spent, 'sub': 'Avg: ₹' ~ avg_expense|round(0), 'icon': 'payments'},
+            {'label': 'Remaining', 'value': '₹' ~ remaining_budget, 'sub': 'Limit: ₹' ~ event.budget_limit, 'color': 'text-blue-600', 'icon': 'account_balance_wallet'},
+            {'label': 'Performance', 'value': performance_score ~ '/100', 'bar': performance_score, 'icon': 'speed'},
+            {'label': 'Net Balance', 'value': '₹' ~ net_balance, 'sub': ('🟢 Profit' if net_balance >= 0 else '🔴 Loss'), 'icon': 'analytics'},
+            {'label': 'Transactions', 'value': total_transactions, 'sub': 'Processed', 'icon': 'history'}
+        ] %}
+        {% for kpi in kpis %}
+        <div class="relative overflow-hidden bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+            <div class="absolute -right-2 -top-2 text-slate-50 opacity-[0.05] group-hover:opacity-[0.1] group-hover:scale-110 transition-all duration-700">
+                <span class="material-symbols-outlined text-8xl">{{ kpi.icon }}</span>
+            </div>
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest relative z-10">{{ kpi.label }}</p>
+            <h3 class="text-xl font-black mt-1 {{ kpi.color if kpi.color else 'text-slate-900' }} relative z-10">{{ kpi.value }}</h3>
+            {% if kpi.bar %}
+                <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden relative z-10">
+                    <div class="bg-blue-600 h-full transition-all duration-1000 ease-out" style="width: {{ kpi.bar }}%"></div>
+                </div>
+            {% else %}
+                <p class="text-slate-400 text-[10px] mt-2 font-bold uppercase relative z-10 group-hover:text-slate-600 transition-colors">{{ kpi.sub }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </section>
+
+    <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 lg:col-span-8 space-y-6">
+            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
+                <div class="flex justify-between items-end mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-6 bg-blue-600 rounded-full group-hover:scale-y-125 transition-transform"></div>
+                        <h4 class="font-black text-sm text-slate-800">Event Budget Progress</h4>
+                    </div>
+                    <span class="text-2xl font-black text-blue-600 group-hover:scale-110 transition-transform">{{ budget_percentage }}%</span>
+                </div>
+                <div class="h-10 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100 p-1.5 shadow-inner">
+                    <div class="h-full bg-gradient-to-r from-blue-400 via-[#005eff] to-blue-700 rounded-full shadow-lg transition-all duration-[2000ms] ease-out hover:brightness-110" style="width: {{ budget_percentage if budget_percentage <= 100 else 100 }}%"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm h-[380px] hover:shadow-xl hover:border-blue-50 transition-all duration-500">
+                    <h4 class="font-black text-[10px] text-slate-400 uppercase mb-4 tracking-widest flex justify-between">
+                        Spending Distribution <span class="material-symbols-outlined text-sm">donut_large</span>
+                    </h4>
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm h-[380px] hover:shadow-xl hover:border-blue-50 transition-all duration-500">
+                    <h4 class="font-black text-[10px] text-slate-400 uppercase mb-4 tracking-widest flex justify-between">
+                        Spending Trend <span class="material-symbols-outlined text-sm">bar_chart</span>
+                    </h4>
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <aside class="col-span-12 lg:col-span-4 space-y-6">
+            <div class="bg-white p-7 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500">
+                <h4 class="font-black text-[11px] text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-blue-500 text-lg">insights</span> Key Event Insights
+                </h4>
+                <div class="space-y-8">
+                    <div class="flex justify-between items-center group cursor-default">
+                        <span class="text-[11px] text-slate-400 font-black uppercase group-hover:text-blue-500 transition-colors">Highest Category</span>
+                        <div class="text-right">
+                            <span class="text-sm font-black text-slate-800 block group-hover:translate-x-[-4px] transition-transform">{{ highest_category or 'N/A' }}</span>
+                            <span class="text-[10px] font-bold text-blue-500 group-hover:text-blue-700 transition-colors">₹{{ highest_category_amount }}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center group cursor-default">
+                        <span class="text-[11px] text-slate-400 font-black uppercase group-hover:text-blue-500 transition-colors">Peak Spend Day</span>
+                        <div class="text-right">
+                            <span class="text-sm font-black text-slate-800 block group-hover:translate-x-[-4px] transition-transform">{{ highest_day or 'N/A' }}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Peak Recorded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#005eff] p-8 rounded-3xl text-white shadow-xl shadow-blue-200 animate-float relative overflow-hidden group">
+                <div class="absolute -right-8 -bottom-8 opacity-20 group-hover:scale-125 transition-transform duration-[2000ms]">
+                    <span class="material-symbols-outlined text-[150px]">hub</span>
+                </div>
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="material-symbols-outlined text-xl">psychology</span>
+                    <h4 class="text-[10px] font-black uppercase tracking-widest opacity-80">Smart AI Insight</h4>
+                </div>
+                <ul class="space-y-4 relative z-10">
+                    {% for r in recommendations %}
+                    <li class="font-bold text-sm leading-relaxed flex items-start gap-2 hover:translate-x-2 transition-transform duration-300">
+                        <span class="text-blue-200 mt-1">✦</span> {{ r }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-2xl transition-all duration-700">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+            <h5 class="font-black text-slate-900 uppercase text-xs tracking-widest flex items-center gap-2">
+                <span class="w-2 h-2 bg-blue-600 rounded-full"></span> Transaction Log
+            </h5>
+            <span class="text-slate-400 text-[10px] font-black uppercase tracking-tighter">{{ total_transactions }} Entries Found</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50/50 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                    <tr>
+                        <th class="px-6 py-5">Date</th>
+                        <th class="px-6 py-5">Description</th>
+                        <th class="px-6 py-5">Category</th>
+                        <th class="px-6 py-5 text-right">Amount</th>
+                        <th class="px-6 py-5 text-center">Receipt</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for exp in expenses %}
+                    <tr class="hover:bg-blue-50/40 transition-all duration-300 group">
+                        <td class="px-6 py-5 font-bold text-slate-500 group-hover:text-blue-600 transition-colors">{{ exp.date }}</td>
+                        <td class="px-6 py-5 text-slate-900 font-semibold">{{ exp.description }}</td>
+                        <td class="px-6 py-5">
+                            <span class="px-2.5 py-1 bg-slate-100 rounded-lg text-[10px] font-black uppercase text-slate-500 group-hover:bg-white group-hover:shadow-sm transition-all">{{ exp.category }}</span>
+                        </td>
+                        <td class="px-6 py-5 text-right font-black {{ 'text-red-500' if exp.transaction_type == 'expense' else 'text-emerald-500' }}">
+                             <span class="opacity-0 group-hover:opacity-100 transition-opacity mr-1">{{ '-' if exp.transaction_type == 'expense' else '+' }}</span>₹{{ exp.amount }}
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            {% if exp.receipt %}
+                                <a href="{{ url_for('static', filename='uploads/' + exp.receipt) }}" target="_blank" class="inline-flex items-center justify-center p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all transform hover:rotate-6">
+                                    <span class="material-symbols-outlined text-sm">visibility</span>
+                                </a>
+                            {% else %}
+                                <span class="text-slate-300">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Elite Keyframes for Animations */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    
+    @keyframes pulse-slow {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.95; transform: scale(0.98); }
+    }
+    .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
+
+    /* Custom Scrollbar for Elite look */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartConfig = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+            duration: 2500,
+            easing: 'easeOutQuart'
+        },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 25,
+                    font: { weight: 'bold', size: 10, family: "'Inter', sans-serif" },
+                    color: '#64748b'
+                }
+            },
+            tooltip: {
+                backgroundColor: '#1e293b',
+                padding: 12,
+                titleFont: { size: 14, weight: 'bold' },
+                cornerRadius: 10,
+                displayColors: false
+            }
+        }
+    };
+
+    new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ chart_labels | tojson }},
+            datasets: [{
+                data: {{ chart_values | tojson }},
+                backgroundColor: ['#005eff', '#3b82f6', '#93c5fd', '#bfdbfe', '#e2e8f0'],
+                borderWidth: 0,
+                hoverOffset: 20
+            }]
+        },
+        options: { ...chartConfig, cutout: '78%' }
+    });
+
+    new Chart(document.getElementById('lineChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ trend_labels | tojson }},
+            datasets: [{
+                label: 'Spending',
+                data: {{ trend_values | tojson }},
+                backgroundColor: '#005eff',
+                hoverBackgroundColor: '#003eb3',
+                borderRadius: 10,
+                barThickness: 16
+            }]
+        },
+        options: {
+            ...chartConfig,
+            scales: {
+                y: { display: false },
+                x: { grid: { display: false }, border: { display: false }, ticks: { font: { weight: 'bold' }, color: '#94a3b8' } }
+            }
+        }
+    });
+</script>
+{% endblock %}

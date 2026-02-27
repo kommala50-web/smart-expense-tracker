@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Import CSV</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label class="form-label">Upload CSV File</label>
+                <input type="file" name="file" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Import</button>
+
+        </form>
+
+        <small class="text-muted">
+            CSV format: date, description, amount, category
+        </small>
+
+    </div>
+</div>
+
+{% endblock %}

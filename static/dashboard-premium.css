@@ -1,0 +1,81 @@
+body {
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+/* Glass cards */
+.card {
+    border-radius: 16px;
+    border: none;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+/* KPI styles */
+.kpi-expense { border-left: 5px solid #ef4444; }
+.kpi-income { border-left: 5px solid #10b981; }
+.kpi-balance { border-left: 5px solid #3b82f6; }
+.kpi-transactions { border-left: 5px solid #6366f1; }
+
+.section-title {
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Health score */
+.health-card {
+    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    color: white;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+}
+
+/* Tables */
+.table thead {
+    background: #f3f4f6;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Progress bar */
+.progress {
+    border-radius: 10px;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg,#6366f1,#3b82f6);
+}
+
+/* Fade animation */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity:0; transform: translateY(8px); }
+    to { opacity:1; transform: translateY(0); }
+}
+
+.card {
+    height: auto !important;
+}
+
+.health-card {
+    max-height: 320px;
+}
+
+canvas {
+    max-height: 320px !important;
+}

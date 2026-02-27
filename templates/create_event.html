@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 min-h-[90vh] flex flex-col justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+    
+    <div class="mb-10 text-center md:text-left">
+        <nav class="text-[11px] text-slate-400 mb-3 font-black uppercase tracking-[0.2em] flex items-center justify-center md:justify-start gap-1">
+            <a href="/events" class="hover:text-blue-600 transition-all flex items-center group">
+                <span class="material-symbols-outlined text-[14px] group-hover:-translate-x-1 transition-transform">arrow_back</span> Back to Portfolio
+            </a>
+        </nav>
+        <h1 class="text-4xl font-black tracking-tight text-slate-900 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-500">Create New Event</h1>
+        <p class="text-slate-500 text-sm mt-2 font-medium">Set your financial guardrails and event parameters for AI-driven tracking.</p>
+    </div>
+
+    <div class="bg-white rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-200/60 overflow-hidden">
+        <div class="p-8 md:p-14">
+            <form method="POST" class="space-y-10">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Event Designation</label>
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors">label</span>
+                            <input type="text" name="name" placeholder="e.g. Q4 Global Summit" 
+                                class="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] text-sm font-bold text-slate-900 focus:border-blue-500/20 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all outline-none" required>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Scheduled Date</label>
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors">calendar_month</span>
+                            <input type="date" name="date" 
+                                class="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] text-sm font-bold text-slate-900 focus:border-blue-500/20 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Event Brief</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-5 top-6 text-slate-300 group-focus-within:text-blue-500 transition-colors">subject</span>
+                        <textarea name="description" rows="3" placeholder="Define the scope and objectives..."
+                            class="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] text-sm font-bold text-slate-900 focus:border-blue-500/20 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all outline-none resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50/30 p-10 rounded-[32px] border border-blue-100/50 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-[11px] font-black uppercase tracking-widest text-blue-600">Financial Ceiling</h4>
+                            <p class="text-[10px] text-blue-400 font-bold uppercase mt-1">Total budget allocated for all transactions</p>
+                        </div>
+                        <div class="bg-blue-600/10 p-2 rounded-xl">
+                            <span class="material-symbols-outlined text-blue-600">account_balance_wallet</span>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-blue-600">₹</span>
+                        <input type="number" step="0.01" name="budget_limit" placeholder="0.00"
+                            class="w-full pl-14 pr-8 py-7 bg-white border-2 border-transparent rounded-[24px] text-4xl font-black text-slate-900 shadow-sm focus:border-blue-500 focus:ring-0 transition-all outline-none placeholder:text-slate-200" required>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" class="w-full bg-[#005eff] hover:bg-[#004ecc] text-white py-6 rounded-[24px] text-xs font-black uppercase tracking-[0.3em] shadow-2xl shadow-blue-200 hover:shadow-blue-400 hover:-translate-y-1 active:scale-[0.97] transition-all flex items-center justify-center gap-4 group">
+                        Deploy Event Instance
+                        <span class="material-symbols-outlined text-sm group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">rocket_launch</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-10 flex items-center justify-center gap-6 opacity-40 group hover:opacity-100 transition-opacity">
+        <div class="h-[1px] w-12 bg-slate-300"></div>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+            <span class="material-symbols-outlined text-[12px]">verified</span> Encrypted Data Modeling
+        </p>
+        <div class="h-[1px] w-12 bg-slate-300"></div>
+    </div>
+</div>
+{% endblock %}

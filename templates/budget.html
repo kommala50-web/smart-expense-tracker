@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-[1440px] mx-auto px-6 py-4 space-y-6">
+
+    <!-- HEADER -->
+    <!-- HEADER -->
+<header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+    <div>
+        <h1 class="text-3xl font-extrabold text-[#0f172a]">
+            Budget Management
+        </h1>
+        <p class="text-slate-500 text-sm">
+            Manage your personal and event budgets separately
+        </p>
+    </div>
+
+    <!-- MODE TOGGLE -->
+    <div class="flex items-center gap-3">
+
+        <a href="{{ url_for('set_budget', mode='personal') }}"
+           class="px-4 py-2 rounded-xl text-sm font-semibold transition
+           {% if mode == 'personal' %}
+                bg-[#005eff] text-white shadow-md
+           {% else %}
+                bg-slate-100 text-slate-600 hover:bg-slate-200
+           {% endif %}">
+            Personal
+        </a>
+
+        <a href="{{ url_for('set_budget', mode='event') }}"
+           class="px-4 py-2 rounded-xl text-sm font-semibold transition
+           {% if mode == 'event' %}
+                bg-[#005eff] text-white shadow-md
+           {% else %}
+                bg-slate-100 text-slate-600 hover:bg-slate-200
+           {% endif %}">
+            Event
+        </a>
+
+        <!-- EVENT DROPDOWN -->
+        {% if mode == 'event' %}
+        <form method="GET">
+            <input type="hidden" name="mode" value="event">
+
+            <select name="event_id"
+                    onchange="this.form.submit()"
+                    class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-sm font-medium">
+
+                <option value="">Select Event</option>
+
+                {% for event in events %}
+                <option value="{{ event.id }}"
+                    {% if event.id|string == event_id|string %}selected{% endif %}>
+                    {{ event.name }}
+                </option>
+                {% endfor %}
+
+            </select>
+        </form>
+        {% endif %}
+
+    </div>
+
+</header>
+
+    <!-- CONFIG CARD -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h3 class="font-bold text-slate-800">Configure Monthly Budget</h3>
+            <p class="text-xs text-slate-400">
+                Current Budget:
+                <span class="font-bold text-slate-700">₹{{ "{:,.2f}".format(monthly_limit) }}</span>
+            </p>
+        </div>
+
+        <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-3 flex-1 max-w-4xl">
+
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                <input type="number"
+                       name="limit"
+                       value="{{ monthly_limit }}"
+                       class="w-full pl-8 pr-4 py-2.5 bg-slate-50 rounded-xl font-bold">
+            </div>
+
+            <select name="budget_type"
+                    class="w-full py-2.5 px-3 bg-slate-50 rounded-xl font-semibold text-sm">
+                <option value="personal">Personal Monthly</option>
+                <option value="event">Event Budget</option>
+            </select>
+
+            <select name="event_id"
+                    id="eventSelect"
+                    class="w-full py-2.5 px-3 bg-slate-50 rounded-xl font-semibold text-sm hidden">
+
+                {% for event in events %}
+                <option value="{{ event.id }}">{{ event.name }}</option>
+                {% endfor %}
+
+            </select>
+
+            <button type="submit"
+                    class="bg-[#005eff] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-blue-600">
+                Update Budget
+            </button>
+
+        </form>
+    </div>
+
+    <!-- STATS -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Monthly Budget</p>
+            <h3 class="text-2xl font-black mt-1">₹{{ "{:,.0f}".format(monthly_limit) }}</h3>
+            <p class="text-emerald-500 text-[10px] font-bold mt-1">↗ 12% increase from Sept</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Total Spent</p>
+            <h3 class="text-2xl font-black mt-1">₹{{ "{:,.0f}".format(total_spent) }}</h3>
+            <p class="text-amber-500 text-[10px] font-bold mt-1">~ Above average spending</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Remaining Budget</p>
+            <h3 class="text-2xl font-black mt-1 text-emerald-600">₹{{ "{:,.0f}".format(remaining_budget) }}</h3>
+            <p class="text-slate-400 text-[10px] mt-1">Valid for 8 more days</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Budget Usage</p>
+            <h3 class="text-2xl font-black mt-1">{{ usage_percent }}%</h3>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div class="h-full bg-amber-400" style="width: {{ usage_percent }}%"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VELOCITY -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex justify-between items-center mb-3">
+            <h4 class="font-bold text-sm">Current Month Spending Velocity</h4>
+            <span class="text-xs font-bold text-amber-600">{{ usage_percent }}% Utilized</span>
+        </div>
+
+        <div class="relative h-3 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-amber-300 to-amber-500" style="width: {{ usage_percent }}%"></div>
+        </div>
+
+        <p class="mt-3 text-xs text-amber-700 bg-amber-50 p-2 rounded-lg flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">warning</span> {{ insight }}
+        </p>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid grid-cols-12 gap-4">
+
+        <div class="col-span-12 lg:col-span-8 space-y-4">
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm h-72">
+                <h4 class="font-bold text-sm mb-4">Spending vs Budget Trend</h4>
+                <canvas id="budgetTrendChart"></canvas>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-50"><h4 class="font-bold text-sm">Budget History</h4></div>
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                        <tr>
+                            <th class="px-5 py-3">Month</th>
+                            <th class="px-5 py-3">Budget</th>
+                            <th class="px-5 py-3">Spent</th>
+                            <th class="px-5 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for item in history %}
+                        <tr class="text-sm">
+                            <td class="px-5 py-3 font-semibold">{{ item.month }}</td>
+                            <td class="px-5 py-3 text-slate-500">₹{{ "{:,.2f}".format(item.budget) }}</td>
+                            <td class="px-5 py-3 font-bold">₹{{ "{:,.2f}".format(item.spent) }}</td>
+                            <td class="px-5 py-3">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase
+                                    {% if item.status == 'Healthy' %}bg-emerald-50 text-emerald-600{% elif item.status == 'Near Limit' %}bg-amber-50 text-amber-600{% else %}bg-red-50 text-red-600{% endif %}">
+                                    {{ item.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <aside class="col-span-12 lg:col-span-4 space-y-4">
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="flex items-center gap-2 text-blue-600 mb-4">
+                    <span class="material-symbols-outlined">lightbulb</span>
+                    <h4 class="font-bold text-sm">Smart Insights</h4>
+                </div>
+                <div class="space-y-3">
+                    <div class="p-3 bg-blue-50 rounded-xl">
+                        <p class="text-xs font-bold text-blue-900 mb-1">AI Recommendation</p>
+                        <p class="text-[11px] text-blue-700">Reduce 'Dining Out' expenses by ₹500 this week.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h4 class="font-bold text-sm mb-4">Spending Breakdown</h4>
+                <canvas id="spendingBreakdownChart"></canvas>
+            </div>
+
+        </aside>
+    </div>
+
+</div>
+
+<script>
+const typeSelect = document.querySelector('select[name="budget_type"]');
+const eventSelect = document.getElementById('eventSelect');
+
+typeSelect.addEventListener('change', function() {
+    if (this.value === 'event') {
+        eventSelect.classList.remove('hidden');
+    } else {
+        eventSelect.classList.add('hidden');
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('spendingBreakdownChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ breakdown_labels|tojson }},
+        datasets: [{
+            data: {{ breakdown_values|tojson }},
+            backgroundColor: ['#005eff','#f59e0b','#10b981','#ef4444'],
+            borderWidth: 0
+        }]
+    },
+    options: { cutout: '70%' }
+});
+
+new Chart(document.getElementById('budgetTrendChart'), {
+    type: 'line',
+    data: {
+        labels: {{ months|tojson }},
+        datasets: [{
+            label: 'Spent',
+            data: {{ trend_spent|tojson }},
+            borderColor: '#005eff',
+            fill: true,
+            backgroundColor: 'rgba(0,94,255,0.05)',
+            tension: 0.4
+        }]
+    }
+});
+</script>
+
+{% endblock %}

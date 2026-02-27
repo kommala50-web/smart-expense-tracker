@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+body {
+    background:#f3f4f6;
+    font-family:"Segoe UI",sans-serif;
+}
+
+.page-wrapper {
+    max-width:760px;
+    margin:50px auto;
+}
+
+.card-box {
+    background:white;
+    border-radius:14px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 4px 20px rgba(0,0,0,.05);
+    padding:30px;
+}
+
+.title {
+    font-weight:600;
+    font-size:22px;
+}
+
+.subtitle {
+    font-size:14px;
+    color:#6b7280;
+    margin-bottom:20px;
+}
+
+.section-title {
+    font-weight:600;
+    font-size:15px;
+    margin-bottom:12px;
+}
+
+.divider {
+    height:1px;
+    background:#e5e7eb;
+    margin:24px 0;
+}
+
+.form-control,
+.form-select {
+    border-radius:10px;
+    padding:10px;
+    border:1px solid #e5e7eb;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+    border-color:#2563eb;
+}
+
+.upload-box {
+    border:1.5px dashed #d1d5db;
+    border-radius:10px;
+    padding:25px;
+    text-align:center;
+    background:#fafafa;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.upload-box:hover {
+    background:#f1f5f9;
+}
+
+.info-box {
+    background:#eff6ff;
+    color:#1e40af;
+    padding:12px 16px;
+    border-radius:10px;
+    font-size:13px;
+    margin-top:12px;
+}
+
+.toggle-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.toggle {
+    width:42px;
+    height:22px;
+    appearance:none;
+    background:#d1d5db;
+    border-radius:999px;
+    position:relative;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.toggle:checked {
+    background:#2563eb;
+}
+
+.toggle::before {
+    content:"";
+    width:18px;
+    height:18px;
+    background:white;
+    position:absolute;
+    top:2px;
+    left:2px;
+    border-radius:999px;
+    transition:.3s;
+}
+
+.toggle:checked::before {
+    transform:translateX(20px);
+}
+
+.footer {
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn-primary {
+    background:#2563eb;
+    border:none;
+    padding:10px 20px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.btn-secondary {
+    background:#f3f4f6;
+    border:none;
+    padding:10px 20px;
+    border-radius:10px;
+}
+</style>
+
+<div class="page-wrapper">
+
+<form method="POST" enctype="multipart/form-data">
+
+    
+
+<div class="card-box">
+
+<div class="title">Add New Expense</div>
+<div class="subtitle">Fill in the details below to record a new expense.</div>
+
+<div class="section-title">Expense Details</div>
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<label>Amount</label>
+<input type="number" step="0.01" name="amount" class="form-control" required>
+</div>
+
+<div class="col-md-6">
+<label>Date</label>
+<input type="date" name="date" class="form-control">
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Transaction Type</label>
+    <select name="transaction_type" class="form-select">
+        <option value="expense">Expense</option>
+        <option value="income">Income</option>
+    </select>
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Payment Method</label>
+    <select name="account" class="form-select">
+        <option value="UPI">UPI</option>
+        <option value="Cash">Cash</option>
+        <option value="Card">Card</option>
+        <option value="Bank">Bank Transfer</option>
+        <option value="Wallet">Wallet</option>
+    </select>
+</div>
+
+<div class="col-md-6">
+<label>Event</label>
+<select name="event_id" class="form-select">
+<option value="">None</option>
+{% for event in events %}
+<option value="{{ event.id }}">{{ event.name }}</option>
+{% endfor %}
+</select>
+</div>
+
+<div class="col-12">
+<label>Description</label>
+<input type="text" name="description" class="form-control">
+</div>
+
+</div>
+
+<div class="divider"></div>
+
+<div class="section-title">Upload Receipt</div>
+
+<label class="upload-box">
+📎 Click to upload receipt
+<input type="file" name="receipt" hidden>
+</label>
+
+<div class="info-box">
+Uploading a receipt helps maintain accurate records and simplifies expense tracking.
+</div>
+
+<div class="divider"></div>
+
+<div class="section-title">Additional Options</div>
+
+<div class="toggle-row">
+<span>Recurring Expense</span>
+<input type="checkbox" class="toggle">
+</div>
+
+<div class="toggle-row">
+<span>Billable Expense</span>
+<input type="checkbox" class="toggle">
+</div>
+
+<div class="toggle-row">
+<span>Add to Report</span>
+<input type="checkbox" class="toggle">
+</div>
+
+<div class="footer">
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+<button type="submit" class="btn btn-primary">Save Expense</button>
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+{% endblock %}

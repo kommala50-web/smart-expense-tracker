@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Compare Events</h2>
+
+<!-- SELECT EVENTS -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="row g-3">
+
+                <div class="col-md-5">
+                    <label class="form-label">Select Event 1</label>
+                    <select name="event1" class="form-select" required>
+                        <option value="">Choose event</option>
+                        {% for e in events %}
+                        <option value="{{ e.id }}">{{ e.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label">Select Event 2</label>
+                    <select name="event2" class="form-select" required>
+                        <option value="">Choose event</option>
+                        {% for e in events %}
+                        <option value="{{ e.id }}">{{ e.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Compare
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% if comparison %}
+
+<!-- COMPARISON TABLE -->
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <h5 class="mb-3">
+            {{ event1.name }} vs {{ event2.name }}
+        </h5>
+
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Metric</th>
+                    <th>{{ event1.name }}</th>
+                    <th>{{ event2.name }}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Total Spent</td>
+                    <td>₹ {{ comparison.event1.total_spent }}</td>
+                    <td>₹ {{ comparison.event2.total_spent }}</td>
+                </tr>
+
+                <tr>
+                    <td>Budget Limit</td>
+                    <td>₹ {{ comparison.event1.budget_limit }}</td>
+                    <td>₹ {{ comparison.event2.budget_limit }}</td>
+                </tr>
+
+                <tr>
+                    <td>Remaining Budget</td>
+                    <td>₹ {{ comparison.event1.remaining_budget }}</td>
+                    <td>₹ {{ comparison.event2.remaining_budget }}</td>
+                </tr>
+
+                <tr>
+                    <td>Budget Usage</td>
+                    <td>{{ comparison.event1.budget_usage }}%</td>
+                    <td>{{ comparison.event2.budget_usage }}%</td>
+                </tr>
+
+                <tr>
+                    <td>Total Transactions</td>
+                    <td>{{ comparison.event1.transactions }}</td>
+                    <td>{{ comparison.event2.transactions }}</td>
+                </tr>
+
+                <tr>
+                    <td>Highest Category</td>
+                    <td>{{ comparison.event1.highest_category }}</td>
+                    <td>{{ comparison.event2.highest_category }}</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

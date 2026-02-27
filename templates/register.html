@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join — Smart Expense Elite</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+    <style>
+        :root {
+            --primary: #005eff;
+            --primary-glow: rgba(0, 94, 255, 0.4);
+            --accent: #ff5c00;
+            --text-main: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #fff; }
+
+        .split-container { display: flex; height: 100vh; width: 100%; }
+
+        /* LEFT PANEL: ANIMATED MESH */
+        .left-panel {
+            flex: 1.2;
+            background: #0032cc;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px;
+            color: white;
+            overflow: hidden;
+        }
+
+        .mesh-gradient {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, #005eff 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, #ff5c00 0%, transparent 30%),
+                radial-gradient(circle at 50% 50%, #002db3 0%, transparent 50%);
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: meshMove 15s infinite alternate ease-in-out;
+            z-index: 1;
+        }
+
+        @keyframes meshMove {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.2) translate(5%, 5%); }
+        }
+
+        .left-content { position: relative; z-index: 2; max-width: 500px; animation: fadeInUp 1s ease-out; }
+
+        .brand-pill {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 100px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+        }
+
+        .hero-title { font-size: 64px; font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin-bottom: 24px; }
+        .hero-title span { color: #ff5c00; }
+
+        /* RIGHT PANEL: REGISTRATION FORM */
+        .right-panel {
+            flex: 1;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .reg-card {
+            width: 100%;
+            max-width: 440px;
+            animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .header-box { margin-bottom: 35px; }
+        .header-box h2 { font-size: 32px; font-weight: 800; color: var(--text-main); margin: 0; }
+        .header-box p { color: #64748b; font-weight: 500; margin-top: 8px; }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label {
+            display: block; font-size: 13px; font-weight: 700; color: #475569;
+            margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .input-wrapper { position: relative; }
+        .input-wrapper i {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            color: #94a3b8; font-size: 20px;
+        }
+
+        .input-elite {
+            width: 100%;
+            padding: 14px 14px 14px 48px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .input-elite:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px -5px rgba(0, 94, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -5px rgba(0, 94, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .login-footer { margin-top: 30px; text-align: center; color: #64748b; font-weight: 600; font-size: 14px; }
+        .login-footer a { color: var(--primary); text-decoration: none; font-weight: 800; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+        @media (max-width: 992px) { .left-panel { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="split-container">
+        <div class="left-panel">
+            <div class="mesh-gradient"></div>
+            <div class="left-content">
+                <div class="brand-pill">
+                    <span class="material-symbols-outlined">person_add</span>
+                    Join Elite Expense
+                </div>
+                <h1 class="hero-title">Start your <span>wealth journey.</span></h1>
+                <p class="hero-desc">Create your institutional account to begin managing expenses with precision and style.</p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="reg-card">
+                <div class="header-box">
+                    <h2>Create Account</h2>
+                    <p>Enter your details to register your ledger.</p>
+                </div>
+
+                <form method="POST">
+                    <div class="input-group">
+                        <label>Preferred Username</label>
+                        <div class="input-wrapper">
+                            <i class="material-symbols-outlined">person</i>
+                            <input type="text" name="username" class="input-elite" placeholder="username" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="material-symbols-outlined">mail</i>
+                            <input type="email" name="email" class="input-elite" placeholder="name@company.com" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Secure Password</label>
+                        <div class="input-wrapper">
+                            <i class="material-symbols-outlined">lock_open</i>
+                            <input type="password" name="password" class="input-elite" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-register">
+                        Initialize Account <span class="material-symbols-outlined">rocket_launch</span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    Already part of the elite? <a href="{{ url_for('login') }}">Sign In Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

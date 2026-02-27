@@ -1,0 +1,197 @@
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== BODY BACKGROUND ===== */
+body {
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(120deg, #1e3c72, #2a5298, #1e3c72);
+    background-size: 300% 300%;
+    animation: gradientMove 25s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Smooth gradient animation */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ===== PARTICLES ===== */
+.particle {
+    position: fixed;
+    top: 0;
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+    animation: float 12s linear infinite;
+}
+
+@keyframes float {
+    from { transform: translate3d(0, 100vh, 0); }
+    to { transform: translate3d(0, -10vh, 0); }
+}
+
+/* ===== MAIN CONTAINER ===== */
+.login-container {
+    width: 100%;
+    max-width: 1100px;
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+}
+
+/* ===== LEFT PANEL ===== */
+.login-left {
+    flex: 1;
+    padding: 60px;
+    color: white;
+    background: linear-gradient(160deg, #1e3c72, #2a5298);
+}
+
+.login-left h1 {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.login-left span {
+    color: #ff7a18;
+}
+
+.login-left p {
+    margin-top: 20px;
+    opacity: 0.8;
+    font-size: 16px;
+}
+
+/* ===== RIGHT PANEL ===== */
+.login-right {
+    flex: 1;
+    padding: 60px;
+    background: white;
+}
+
+/* ===== LOGIN CARD ===== */
+.login-card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.login-card h2 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.login-card p {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+/* ===== INPUT FIELDS ===== */
+.form-control {
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-left: 15px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 0 2px rgba(42,82,152,0.15);
+}
+
+/* ===== REMEMBER + FORGOT ===== */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-options label {
+    font-size: 14px;
+}
+
+.form-options a {
+    font-size: 14px;
+    text-decoration: none;
+    color: #ff7a18;
+}
+
+/* ===== SIGN IN BUTTON ===== */
+.btn-login {
+    width: 100%;
+    height: 50px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(90deg, #ff7a18, #ff4e00);
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,78,0,0.3);
+}
+
+/* ===== SIGNUP LINK ===== */
+.signup {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.signup a {
+    color: #ff7a18;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ===== FLASH MESSAGE ===== */
+.alert {
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* ===== SUCCESS ANIMATION ===== */
+.success {
+    animation: successPulse 0.5s ease;
+    transform-origin: center;
+    will-change: transform;
+}
+
+@keyframes successPulse {
+    0% { transform: scale3d(1,1,1); }
+    50% { transform: scale3d(1.03,1.03,1); }
+    100% { transform: scale3d(1,1,1); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .login-container {
+        flex-direction: column;
+    }
+
+    .login-left {
+        text-align: center;
+    }
+}

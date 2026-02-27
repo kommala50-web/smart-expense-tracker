@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Event Analytics</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Total Expense</h6>
+            <h4>₹ {{ total_expense }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Budget Limit</h6>
+            <h4>₹ {{ event.budget_limit }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Remaining Budget</h6>
+            <h4>₹ {{ remaining_budget }}</h4>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+        <h5>Expenses in this Event</h5>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for expense in expenses %}
+                <tr>
+                    <td>₹ {{ expense.amount }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>{{ expense.date }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}

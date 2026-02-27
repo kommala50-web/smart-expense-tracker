@@ -1,0 +1,171 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f7fb;
+}
+
+/* ===== LOGIN ===== */
+
+.login-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+.left-panel {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(270deg,#1e3c72,#2a5298,#16222a,#3a6073);
+    background-size: 800% 800%;
+    animation: gradientMove 15s ease infinite;
+    color: white;
+}
+
+@keyframes gradientMove {
+    0% {background-position:0% 50%}
+    50% {background-position:100% 50%}
+    100% {background-position:0% 50%}
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    width: 420px;
+    background: white;
+    padding: 40px;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* ===== DASHBOARD CARDS ===== */
+
+.dashboard-card {
+    padding: 20px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    transition: all .25s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* ===== FORMS ===== */
+
+.label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 6px;
+}
+
+.input {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    transition: .2s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* ===== BUTTONS ===== */
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-primary:hover {
+    background: #1e40af;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 12px;
+    padding: 10px 22px;
+    border: none;
+}
+
+/* ===== TOGGLE ===== */
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.toggle {
+    width: 42px;
+    height: 22px;
+    appearance: none;
+    background: #d1d5db;
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.toggle:checked {
+    background: #2563eb;
+}
+
+.toggle::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: white;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    border-radius: 999px;
+    transition: .3s;
+}
+
+.toggle:checked::before {
+    transform: translateX(20px);
+}
+
+/* ===== INFO BOX ===== */
+
+.info-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+/* ===== TABLE ===== */
+
+.table-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
