@@ -153,3 +153,56 @@
     font-size: 13px;
     color: #111827;
 }
+
+/* ---------------- MOBILE NAVBAR ---------------- */
+
+.menu-toggle{
+    display:none;
+    font-size:26px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:#111827;
+}
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.navbar{
+    padding:0 16px;
+}
+
+.menu-toggle{
+    display:block;
+}
+
+.nav-left{
+    gap:14px;
+}
+
+.nav-links{
+    display:none;
+    position:absolute;
+    top:72px;
+    left:0;
+    width:100%;
+    background:white;
+    flex-direction:column;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.nav-links.show{
+    display:flex;
+}
+
+.nav-links li{
+    margin-bottom:10px;
+}
+
+.search-box{
+    display:none;
+}
+
+}
